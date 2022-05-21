@@ -1,6 +1,6 @@
 import React from 'react';
 
-const DiaryItem = ({ author, content, emotion, created_date, id }) => {
+const DiaryItem = ({ author, content, emotion, created_date }) => {
   return (
     <div className='DiaryItem'>
       <div className='info'>

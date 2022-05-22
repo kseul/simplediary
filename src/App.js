@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import './App.css';
 import DiaryList from './Diary.List';
 import DiaryEditor from './DiaryEditor';
+import Lifecycle from './Lifecycle';
 
 function App() {
   const [data, setData] = useState([]); // 일기가 없는 상태 빈배열
@@ -40,6 +41,7 @@ function App() {
 
   return (
     <div className='App'>
+      <Lifecycle />
       <DiaryEditor onCreate={onCreate} />
       <DiaryList diaryList={data} onEdit={onEdit} onRemove={onRemove} />
     </div>

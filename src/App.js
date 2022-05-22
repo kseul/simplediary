@@ -1,11 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './App.css';
 import DiaryList from './Diary.List';
 import DiaryEditor from './DiaryEditor';
-import OptimizeTest from './OptimizeTest';
 
 function App() {
-  const [data, setData] = useState([]); // 일기가 없는 상태 빈배열
+  const [data, setData] = useState([]); // 일기가 없는 상태 빈배열 -> APP컴포넌트 1차 렌더링
   const dataId = useRef(0);
 
   const getData = async () => {
@@ -26,10 +25,13 @@ function App() {
   };
 
   useEffect(() => {
-    getData();
+    getData(); // 호출 및 24:setData로 다시 2차 렌더링
   }, []);
 
-  const onCreate = (author, content, emotion) => {
+  // usememo는 함수가아닌 값을 반환하므로 아래에 쓰면 안된다.
+  // onCreate 함수를 원본 그대로 DiaryEditor에 보내주기를 원함 (어떤값을 반환하는 것이 아님)
+  // onCreate 함수가 다시 생성되지 않도록 하기를 원한다. 즉 mount되었을때 한번 만들고 그다음부터는 재사용O(함수를재생성X)
+  const onCreate = useCallback((author, content, emotion) => {
     const created_date = new Date().getTime();
     const newItem = {
       author,
@@ -39,8 +41,8 @@ function App() {
       id: dataId.current,
     };
     dataId.current += 1;
-    setData([newItem, ...data]); // 원래 데이터에다가 newItem을 이어붙이는 효과 -> 반대순서면 newItem이 먼저
-  };
+    setData((data) => [newItem, ...data]); // 원래 데이터에다가 newItem을 이어붙이는 효과 -> 반대순서면 newItem이 먼저
+  }, []);
 
   // 특정 일기 데이터를 수정하는 함수
   const onEdit = (targetId, newContent) => {
@@ -73,7 +75,6 @@ function App() {
 
   return (
     <div className='App'>
-      <OptimizeTest />
       <DiaryEditor onCreate={onCreate} />
       <div>전체 일기 : {data.length}</div>
       <div>기분 좋은 일기 개수 : {goodCount}</div>

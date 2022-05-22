@@ -1,6 +1,11 @@
-import { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 const DiaryEditor = ({ onCreate }) => {
+  // onCreate의 변화로 같이 렌더링이 되는 상황
+  useEffect(() => {
+    console.log('DiaryEditor 렌더');
+  });
+
   const authorInput = useRef(); // 돔요소 접근
   const contentInput = useRef();
   const [state, setState] = useState({
@@ -74,4 +79,4 @@ const DiaryEditor = ({ onCreate }) => {
   );
 };
 
-export default DiaryEditor;
+export default React.memo(DiaryEditor);

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import './App.css';
 import DiaryList from './Diary.List';
 import DiaryEditor from './DiaryEditor';
+import OptimizeTest from './OptimizeTest';
 
 function App() {
   const [data, setData] = useState([]); // 일기가 없는 상태 빈배열
@@ -58,9 +59,9 @@ function App() {
   };
 
   const getDiaryAnalysis = useMemo(() => {
-    // useMemo를 사용하면 값을 반환받음 -> 함수로 사용하지 않도록 주의
+    // useMemo 함수연산최적화 / useMemo를 사용하면 값을 반환받음 -> 함수로 사용하지 않도록 주의
     // 두번 찍히는 이유: 초기 data 빈배열 상태일때 한번 호출, getData API의 성공으로 data가 바뀌면서 재호출
-    console.log('일기 분석 시작');
+    // console.log('일기 분석 시작');
 
     const goodCount = data.filter((it) => it.emotion >= 3).length;
     const badCount = data.length - goodCount;
@@ -72,6 +73,7 @@ function App() {
 
   return (
     <div className='App'>
+      <OptimizeTest />
       <DiaryEditor onCreate={onCreate} />
       <div>전체 일기 : {data.length}</div>
       <div>기분 좋은 일기 개수 : {goodCount}</div>

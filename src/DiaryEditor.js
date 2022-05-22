@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { DiaryDispatchContext } from './App';
 
-const DiaryEditor = ({ onCreate }) => {
-  // onCreate의 변화로 같이 렌더링이 되는 상황
+const DiaryEditor = () => {
+  const { onCreate } = useContext(DiaryDispatchContext);
 
   const authorInput = useRef(); // 돔요소 접근
   const contentInput = useRef();

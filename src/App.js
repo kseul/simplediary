@@ -45,20 +45,17 @@ function App() {
   }, []);
 
   // 특정 일기 데이터를 수정하는 함수
-  const onEdit = (targetId, newContent) => {
-    setData(
-      // 원본 데이터 배열에 map으로 순회, 새로운 수정된 배열 만들어서 반환
-      // 수정대상이라면 객체 수정, 아니라면 그대로 it 객체
+  const onEdit = useCallback((targetId, newContent) => {
+    setData((data) =>
       data.map((it) =>
         it.id === targetId ? { ...it, content: newContent } : it
       )
     );
-  };
+  }, []);
 
-  const onRemove = (targetId) => {
-    const newDiaryList = data.filter((it) => it.id !== targetId);
-    setData(newDiaryList);
-  };
+  const onRemove = useCallback((targetId) => {
+    setData((data) => data.filter((it) => it.id !== targetId));
+  }, []);
 
   const getDiaryAnalysis = useMemo(() => {
     // useMemo 함수연산최적화 / useMemo를 사용하면 값을 반환받음 -> 함수로 사용하지 않도록 주의

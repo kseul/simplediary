@@ -1,12 +1,35 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import DiaryList from './Diary.List';
 import DiaryEditor from './DiaryEditor';
-import Lifecycle from './Lifecycle';
+// import Lifecycle from './Lifecycle';
+
+// https://jsonplaceholder.typicode.com/comments
 
 function App() {
   const [data, setData] = useState([]); // 일기가 없는 상태 빈배열
   const dataId = useRef(0);
+  const getData = async () => {
+    const res = await fetch(
+      'https://jsonplaceholder.typicode.com/comments'
+    ).then((res) => res.json());
+    console.log(dataId);
+    const initData = res.slice(0, 20).map((it) => {
+      console.log(dataId);
+      return {
+        author: it.email,
+        content: it.body,
+        emotion: Math.floor(Math.random() * 5) + 1,
+        created_date: new Date().getTime(),
+        id: dataId.current++, // return이 바로됨 (dataId.current += 1)을 할 수가 없으므로 후위연산자++ 이용
+      };
+    });
+    setData(initData);
+  };
+  console.log(dataId);
+  useEffect(() => {
+    getData();
+  }, []);
 
   const onCreate = (author, content, emotion) => {
     const created_date = new Date().getTime();
@@ -41,7 +64,7 @@ function App() {
 
   return (
     <div className='App'>
-      <Lifecycle />
+      {/* <Lifecycle /> */}
       <DiaryEditor onCreate={onCreate} />
       <DiaryList diaryList={data} onEdit={onEdit} onRemove={onRemove} />
     </div>

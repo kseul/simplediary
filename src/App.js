@@ -1,21 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import './App.css';
 import DiaryList from './Diary.List';
 import DiaryEditor from './DiaryEditor';
-// import Lifecycle from './Lifecycle';
-
-// https://jsonplaceholder.typicode.com/comments
 
 function App() {
   const [data, setData] = useState([]); // 일기가 없는 상태 빈배열
   const dataId = useRef(0);
+
   const getData = async () => {
     const res = await fetch(
       'https://jsonplaceholder.typicode.com/comments'
     ).then((res) => res.json());
-    console.log(dataId);
+
     const initData = res.slice(0, 20).map((it) => {
-      console.log(dataId);
       return {
         author: it.email,
         content: it.body,
@@ -26,7 +23,7 @@ function App() {
     });
     setData(initData);
   };
-  console.log(dataId);
+
   useEffect(() => {
     getData();
   }, []);
@@ -46,8 +43,6 @@ function App() {
 
   // 특정 일기 데이터를 수정하는 함수
   const onEdit = (targetId, newContent) => {
-    console.log(targetId);
-    console.log(newContent);
     setData(
       // 원본 데이터 배열에 map으로 순회, 새로운 수정된 배열 만들어서 반환
       // 수정대상이라면 객체 수정, 아니라면 그대로 it 객체
@@ -62,10 +57,27 @@ function App() {
     setData(newDiaryList);
   };
 
+  const getDiaryAnalysis = useMemo(() => {
+    // useMemo를 사용하면 값을 반환받음 -> 함수로 사용하지 않도록 주의
+    // 두번 찍히는 이유: 초기 data 빈배열 상태일때 한번 호출, getData API의 성공으로 data가 바뀌면서 재호출
+    console.log('일기 분석 시작');
+
+    const goodCount = data.filter((it) => it.emotion >= 3).length;
+    const badCount = data.length - goodCount;
+    const goodRatio = (goodCount / data.length) * 100;
+    return { goodCount, badCount, goodRatio };
+  }, [data.length]);
+
+  const { goodCount, badCount, goodRatio } = getDiaryAnalysis;
+
   return (
     <div className='App'>
-      {/* <Lifecycle /> */}
       <DiaryEditor onCreate={onCreate} />
+      <div>전체 일기 : {data.length}</div>
+      <div>기분 좋은 일기 개수 : {goodCount}</div>
+      <div>기분 나쁜 일기 개수 : {badCount}</div>
+      <div>기분 좋은 일기 비율 : {goodRatio} %</div>
+
       <DiaryList diaryList={data} onEdit={onEdit} onRemove={onRemove} />
     </div>
   );
